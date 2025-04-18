@@ -6,10 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System.Text.Json.Serialization; // For JsonNumberHandling
 
 var builder = WebApplication.CreateBuilder(args);
-
-// Add services to the container.
+builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -91,9 +91,14 @@ app.Run("http://0.0.0.0:5000");
 public class InventoryItem
 {
     public int Id { get; set; }
-    public string Name { get; set; } = string.Empty;
-    public string Category { get; set; } = string.Empty;
+    public string Name { get; set; }
+    public string Category { get; set; }
+    
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public int Quantity { get; set; }
+    
+    [JsonNumberHandling(JsonNumberHandling.AllowReadingFromString)]
     public decimal Price { get; set; }
-    public string Description { get; set; } = string.Empty;
+    
+    public string Description { get; set; }
 }
