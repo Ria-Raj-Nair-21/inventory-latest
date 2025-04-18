@@ -1,8 +1,9 @@
 using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 
@@ -50,6 +51,7 @@ app.MapPut("/inventory/{id}", (int id, InventoryItem updatedItem) =>
     existingItem.Quantity = updatedItem.Quantity;
     existingItem.Price = updatedItem.Price;
     existingItem.Category = updatedItem.Category;
+    existingItem.Description = updatedItem.Description;
 
     return Results.Ok(existingItem);
 });
@@ -66,7 +68,7 @@ app.MapDelete("/inventory/{id}", (int id) =>
 
 app.MapGet("/inventory/category/{category}", (string category) =>
 {
-    var items = inventory.Where(i => i.Category.Equals(category, System.StringComparison.OrdinalIgnoreCase));
+    var items = inventory.Where(i => i.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
     return Results.Ok(items);
 });
 
