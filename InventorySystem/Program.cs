@@ -6,11 +6,7 @@ using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.OpenApi.Models;
-using Microsoft.AspNetCore.Http;
-using static Microsoft.AspNetCore.Http.Results;
 
-
-// Simple in-memory storage for demo purposes
 var inventory = new List<InventoryItem>();
 var nextId = 1;
 
@@ -30,15 +26,19 @@ app.UseSwaggerUI(c =>
     c.SwaggerEndpoint("/swagger/v1/swagger.json", "Inventory API V1");
 });
 
+// Root endpoint
+app.MapGet("/", () => "Inventory System is running!");
 
-// API Endpoints
+// View all inventory items
+app.MapGet("/inventory", () => Results.Ok(inventory));
+
+// View specific item by ID
 app.MapGet("/inventory/{id}", (int id) =>
 {
     var item = inventory.FirstOrDefault(i => i.Id == id);
-    return item != null
-        ? Results.Extensions.Ok(item)
-        : Results.Extensions.NotFound();
+    return item != null ? Results.Ok(item) : Results.NotFound();
 });
+
 // Add new inventory item
 app.MapPost("/inventory", (InventoryItem item) =>
 {
@@ -53,12 +53,12 @@ app.MapPut("/inventory/{id}", (int id, InventoryItem updatedItem) =>
     var existingItem = inventory.FirstOrDefault(i => i.Id == id);
     if (existingItem == null)
         return Results.NotFound();
-    
+
     existingItem.Name = updatedItem.Name;
     existingItem.Quantity = updatedItem.Quantity;
     existingItem.Price = updatedItem.Price;
     existingItem.Category = updatedItem.Category;
-    
+
     return Results.Ok(existingItem);
 });
 
@@ -68,7 +68,7 @@ app.MapDelete("/inventory/{id}", (int id) =>
     var item = inventory.FirstOrDefault(i => i.Id == id);
     if (item == null)
         return Results.NotFound();
-    
+
     inventory.Remove(item);
     return Results.NoContent();
 });
@@ -99,4 +99,3 @@ public class InventoryItem
     public decimal Price { get; set; } = 0.0m;
     public string Description { get; set; } = string.Empty;
 }
-
