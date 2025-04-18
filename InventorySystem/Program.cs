@@ -14,6 +14,14 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
 
 var app = builder.Build();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen();
+
+if (app.Environment.IsDevelopment())
+{
+    app.UseSwagger();
+    app.UseSwaggerUI();
+}
 
 // API Endpoints
 app.MapGet("/", () => "Inventory System is running!");
@@ -81,10 +89,10 @@ app.Run("http://0.0.0.0:5000");
 // Inventory Item Model
 public class InventoryItem
 {
-    public int Id { get; set; }
-    public string Name { get; set; }
-    public string Category { get; set; }
-    public int Quantity { get; set; }
-    public decimal Price { get; set; }
-    public string Description { get; set; }
+    public int Id { get; set; }=string.Empty;
+    public string Name { get; set; }=string.Empty;
+    public string Category { get; set; }=string.Empty;
+    public int Quantity { get; set; }=string.Empty;
+    public decimal Price { get; set; }=string.Empty;
+    public string Description { get; set; }=string.Empty;
 }
