@@ -6,6 +6,9 @@ using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Linq;
 using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+
 
 var inventory = new List<InventoryItem>();
 var nextId = 1;
@@ -74,6 +77,7 @@ app.MapDelete("/inventory/{id}", (int id) =>
 });
 
 // Search by category
+// Search by category
 app.MapGet("/inventory/category/{category}", (string category) =>
 {
     var items = inventory.Where(i => i.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
@@ -98,4 +102,11 @@ public class InventoryItem
     public int Quantity { get; set; } = 0;
     public decimal Price { get; set; } = 0.0m;
     public string Description { get; set; } = string.Empty;
+}
+public static class ResultsExtensions
+{
+    public static IResult Ok<T>(T value) => Results.Ok(value);
+    public static IResult NotFound() => Results.NotFound();
+    public static IResult Created<T>(string uri, T value) => Results.Created(uri, value);
+    public static IResult NoContent() => Results.NoContent();
 }
