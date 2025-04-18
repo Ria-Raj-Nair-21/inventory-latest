@@ -1,13 +1,15 @@
+using System;
+using System.Collections.Generic;
+using System.Linq;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.OpenApi.Models;
-using System;
-using System.Collections.Generic;
-using System.Linq;
 
 var builder = WebApplication.CreateBuilder(args);
+
+// Add services to the container.
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen(c =>
 {
@@ -15,11 +17,16 @@ builder.Services.AddSwaggerGen(c =>
 });
 
 var app = builder.Build();
-app.UseSwagger();
-app.UseSwaggerUI(c =>
+
+// Configure the HTTP request pipeline.
+if (app.Environment.IsDevelopment())
 {
-    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Inventory API V1");
-});
+    app.UseSwagger();
+    app.UseSwaggerUI(c =>
+    {
+        c.SwaggerEndpoint("/swagger/v1/swagger.json", "Inventory API V1");
+    });
+}
 
 var inventory = new List<InventoryItem>();
 var nextId = 1;
@@ -47,11 +54,11 @@ app.MapPut("/inventory/{id}", (int id, InventoryItem updatedItem) =>
     if (existingItem == null)
         return Results.NotFound();
 
-    existingItem.Name = updatedItem.Name;
+    existingItem.Name = updatedItem.Name ?? existingItem.Name;
     existingItem.Quantity = updatedItem.Quantity;
     existingItem.Price = updatedItem.Price;
-    existingItem.Category = updatedItem.Category;
-    existingItem.Description = updatedItem.Description;
+    existingItem.Category = updatedItem.Category ?? existingItem.Category;
+    existingItem.Description = updatedItem.Description ?? existingItem.Description;
 
     return Results.Ok(existingItem);
 });
@@ -68,7 +75,8 @@ app.MapDelete("/inventory/{id}", (int id) =>
 
 app.MapGet("/inventory/category/{category}", (string category) =>
 {
-    var items = inventory.Where(i => i.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
+    var items = inventory.Where(i => 
+        i.Category.Equals(category, StringComparison.OrdinalIgnoreCase));
     return Results.Ok(items);
 });
 
