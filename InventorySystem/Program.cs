@@ -1,4 +1,4 @@
-
+using System;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
@@ -7,7 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Microsoft.OpenApi.Models;
 using Microsoft.AspNetCore.Http;
-using System;
+using static Microsoft.AspNetCore.Http.Results;
 
 
 // Simple in-memory storage for demo purposes
@@ -97,10 +97,11 @@ app.Run("http://0.0.0.0:5000");
 // Inventory Item Model
 public class InventoryItem
 {
-    public int Id { get; set; } // Do not assign string.Empty here
+    public int Id { get; set; } = 0;
     public string Name { get; set; } = string.Empty;
     public string Category { get; set; } = string.Empty;
-    public int Quantity { get; set; } = 0; // Default int value
-    public decimal Price { get; set; } = 0.0m; // Decimal default with 'm' suffix
+    public int Quantity { get; set; } = 0;
+    public decimal Price { get; set; } = 0.0m;
     public string Description { get; set; } = string.Empty;
 }
+
