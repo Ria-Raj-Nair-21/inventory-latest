@@ -5,6 +5,10 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using System.Collections.Generic;
 using System.Linq;
+using Microsoft.OpenApi.Models;
+using Microsoft.AspNetCore.Http;
+using System;
+
 
 // Simple in-memory storage for demo purposes
 var inventory = new List<InventoryItem>();
@@ -12,16 +16,20 @@ var nextId = 1;
 
 var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddControllers();
+builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddSwaggerGen(c =>
+{
+    c.SwaggerDoc("v1", new OpenApiInfo { Title = "Inventory API", Version = "v1" });
+});
 
 var app = builder.Build();
-builder.Services.AddEndpointsApiExplorer();
-builder.Services.AddSwaggerGen();
 
-if (app.Environment.IsDevelopment())
+app.UseSwagger();
+app.UseSwaggerUI(c =>
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
-}
+    c.SwaggerEndpoint("/swagger/v1/swagger.json", "Inventory API V1");
+});
+
 
 // API Endpoints
 app.MapGet("/", () => "Inventory System is running!");
@@ -89,10 +97,10 @@ app.Run("http://0.0.0.0:5000");
 // Inventory Item Model
 public class InventoryItem
 {
-    public int Id { get; set; }=string.Empty;
-    public string Name { get; set; }=string.Empty;
-    public string Category { get; set; }=string.Empty;
-    public int Quantity { get; set; }=string.Empty;
-    public decimal Price { get; set; }=string.Empty;
-    public string Description { get; set; }=string.Empty;
+    public int Id { get; set; } // Do not assign string.Empty here
+    public string Name { get; set; } = string.Empty;
+    public string Category { get; set; } = string.Empty;
+    public int Quantity { get; set; } = 0; // Default int value
+    public decimal Price { get; set; } = 0.0m; // Decimal default with 'm' suffix
+    public string Description { get; set; } = string.Empty;
 }
