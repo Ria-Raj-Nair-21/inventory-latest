@@ -32,18 +32,13 @@ app.UseSwaggerUI(c =>
 
 
 // API Endpoints
-app.MapGet("/", () => "Inventory System is running!");
-
-// View all inventory items
-app.MapGet("/inventory", () => inventory);
-
-// View specific item by ID
-app.MapGet("/inventory/{id}", (int id) => 
+app.MapGet("/inventory/{id}", (int id) =>
 {
     var item = inventory.FirstOrDefault(i => i.Id == id);
-    return item != null ? Results.Ok(item) : Results.NotFound();
+    return item != null
+        ? Results.Extensions.Ok(item)
+        : Results.Extensions.NotFound();
 });
-
 // Add new inventory item
 app.MapPost("/inventory", (InventoryItem item) =>
 {
